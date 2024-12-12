@@ -1,5 +1,3 @@
-
-
 package com.mycompany.crivosegmentado;
 
 import java.util.ArrayList;

@@ -1,4 +1,3 @@
-
 package com.mycompany.primosdistribuido;
 
 import java.io.*;
