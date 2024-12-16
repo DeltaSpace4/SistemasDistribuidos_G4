@@ -22,14 +22,23 @@ public class CrivoSegmentado {
             return;
         }
 
+        // Capturar o tempo inicial usando nanoTime()
+        long inicioExec = System.nanoTime();
+
         // Encontrar primos no intervalo usando o Crivo Segmentado
         List<Integer> primos = crivoSegmentado(inicio, fim);
+
+        // Capturar o tempo final usando nanoTime()
+        long fimExec = System.nanoTime();
+
+        // Calcular e exibir o tempo de execução
+        long tempoExec = fimExec - inicioExec; // Tempo em milissegundos
+        System.out.println("Tempo de execução: " + tempoExec / 1000000.0 + " ms");
 
         // Exibir os números primos encontrados
         System.out.println("Números primos no intervalo [" + inicio + ", " + fim + "]:");
         for (int primo : primos) {
             totalPrimos += 1;
-            
         }
         System.out.print("Total de primos: " + totalPrimos);
     }
@@ -64,7 +73,6 @@ public class CrivoSegmentado {
                 }
             }
         }
-
         return primos;
     }
 
@@ -81,7 +89,6 @@ public class CrivoSegmentado {
                 }
             }
         }
-
         return primos;
     }
 }
