@@ -1,83 +1,44 @@
-package com.mycompany.crivosegmentado;
+package primosThreads.com.mycompany.primosthreads;
+
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-public class CrivoSegmentado {
+public class PrimosThreads {
+
+    public static final long LIMITE = 1_000_000_000L; // Intervalo máximo
+    public static final int THREADS = 4; // Número de threads
+    public static final long TAMANHO_BLOCO = 10_000_000L; // Tamanho do bloco
+
     public static void main(String[] args) {
-        int totalPrimos = 0;
-        int numThreads = 4;
-        Scanner scanner = new Scanner(System.in);
+        // Calcular primos base até sqrt(LIMITE)
+        int limitePrimosBase = (int) Math.sqrt(LIMITE);
+        List<Integer> primosBase = crivoEratostenes(limitePrimosBase);
 
-        // Entrada do intervalo
-        System.out.print("Digite o início do intervalo: ");
-        int inicio = scanner.nextInt();
+        // Dividir o intervalo em blocos e processar com threads
+        List<Thread> threads = new ArrayList<>();
 
-        System.out.print("Digite o fim do intervalo: ");
-        int fim = scanner.nextInt();
+        for (long blocoInicio = 0; blocoInicio < LIMITE; blocoInicio += TAMANHO_BLOCO) {
+            long blocoFim = Math.min(blocoInicio + TAMANHO_BLOCO - 1, LIMITE - 1);
 
-        // Validação do intervalo
-        if (inicio > fim) {
-            System.out.println("O início do intervalo não pode ser maior que o fim.");
-            return;
+            ExThreadCrivo thread = new ExThreadCrivo(blocoInicio, blocoFim, primosBase);
+            threads.add(thread);
+            thread.start();
         }
 
-        // Capturar o tempo inicial usando nanoTime()
-        long inicioExec = System.nanoTime();
-
-        // Encontrar primos no intervalo usando o Crivo Segmentado
-        List<Integer> primos = crivoSegmentado(inicio, fim);
-
-        // Capturar o tempo final usando nanoTime()
-        long fimExec = System.nanoTime();
-
-        // Calcular e exibir o tempo de execução
-        long tempoExec = fimExec - inicioExec; // Tempo em milissegundos
-        System.out.println("Tempo de execução: " + tempoExec / 1000000.0 + " ms");
-
-        // Exibir os números primos encontrados
-        System.out.println("Números primos no intervalo [" + inicio + ", " + fim + "]:");
-        for (int primo : primos) {
-            totalPrimos += 1;
-        }
-        System.out.print("Total de primos: " + totalPrimos);
-    }
-
-    // Função para encontrar primos usando o Crivo Segmentado
-    public static List<Integer> crivoSegmentado(int inicio, int fim) {
-        // Passo 1: Calcular todos os primos até sqrt(fim) usando o Crivo de Eratóstenes
-        int limite = (int) Math.sqrt(fim);
-        List<Integer> primosBase = crivoEratostenes(limite);
-
-        // Passo 2: Criar um array booleano para marcar números compostos no intervalo
-        boolean[] isComposto = new boolean[fim - inicio + 1];
-
-        // Passo 3: Marcar múltiplos de cada primo no intervalo
-        for (int primo : primosBase) {
-            // Encontrar o menor múltiplo do primo dentro do intervalo
-            int menorMultiplo = Math.max(primo * primo, (inicio + primo - 1) / primo * primo);
-
-            // Marcar todos os múltiplos do primo como compostos
-            for (int j = menorMultiplo; j <= fim; j += primo) {
-                isComposto[j - inicio] = true;
+        // Aguardar todas as threads terminarem
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
-        // Passo 4: Coletar os números primos do intervalo
-        List<Integer> primos = new ArrayList<>();
-        for (int i = 0; i < isComposto.length; i++) {
-            if (!isComposto[i]) {
-                int numero = i + inicio;
-                if (numero > 1) { // Ignorar 1, que não é primo
-                    primos.add(numero);
-                }
-            }
-        }
-        return primos;
+        System.out.println("Processamento concluído!");
     }
 
-    // Função auxiliar: Crivo de Eratóstenes para encontrar primos até um limite
+    // Função auxiliar: Crivo de Eratóstenes para calcular primos base
     public static List<Integer> crivoEratostenes(int limite) {
         boolean[] isComposto = new boolean[limite + 1];
         List<Integer> primos = new ArrayList<>();
@@ -90,6 +51,46 @@ public class CrivoSegmentado {
                 }
             }
         }
+
         return primos;
     }
 }
+
+class ExThreadCrivo extends Thread {
+    private final long inicio;
+    private final long fim;
+    private final List<Integer> primosBase;
+
+    public ExThreadCrivo(long inicio, long fim, List<Integer> primosBase) {
+        this.inicio = inicio;
+        this.fim = fim;
+        this.primosBase = primosBase;
+    }
+
+    @Override
+    public void run() {
+        // Crivo Segmentado para o bloco [inicio, fim]
+        boolean[] isComposto = new boolean[(int) (fim - inicio + 1)];
+
+        // Marcar múltiplos de primos base no bloco
+        for (int primo : primosBase) {
+            long menorMultiplo = Math.max(primo * primo, (inicio + primo - 1) / primo * primo);
+
+            for (long j = menorMultiplo; j <= fim; j += primo) {
+                isComposto[(int) (j - inicio)] = true;
+            }
+        }
+
+        // Contar primos no bloco
+        int countPrimos = 0;
+        for (int i = 0; i < isComposto.length; i++) {
+            if (!isComposto[i] && (i + inicio) > 1) {
+                countPrimos++;
+            }
+        }
+
+        System.out.println("Thread " + this.getName() + ": " +
+            "Primos no intervalo [" + inicio + ", " + fim + "] = " + countPrimos);
+    }
+}
+
