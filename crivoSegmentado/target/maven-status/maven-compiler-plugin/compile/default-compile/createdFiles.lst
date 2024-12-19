@@ -1,0 +1,10 @@
+com\mycompany\primosRMI\Primos.class
+com\mycompany\primosRMI\PrimosImpl.class
+com\mycompany\crivosegmentado\CrivoSegmentado.class
+Main.class
+com\mycompany\primosdistribuido\ClientePrimos.class
+com\mycompany\primosDistribuidosDoisNucleos\Servidor.class
+PrimosThreads.class
+com\mycompany\primosdistribuido\Servidor.class
+com\mycompany\primosDistribuidosDoisNucleos\Cliente.class
+com\mycompany\primosRMI\main.class

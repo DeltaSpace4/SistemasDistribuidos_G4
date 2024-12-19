@@ -1,5 +1,3 @@
-package com.mycompany.primosThreads;
-
 import java.util.List;
 
 public class PrimosThreads implements Runnable {
