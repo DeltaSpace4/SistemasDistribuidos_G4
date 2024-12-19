@@ -15,10 +15,10 @@ public class Main {
         long numeroThreads = Runtime.getRuntime().availableProcessors();
 
         System.out.println("Insira o início do intervalo: /n");
-        long valorInicial = scanner.nextInt();
+        long valorInicial = scanner.nextLong();
 
         System.out.println("Insira o final do intervalor /n ");
-        long valorFinal = scanner.nextInt();
+        long valorFinal = scanner.nextLong();
 
         // Lista que vai armazenar os primos encontrados
         List<Long> primos = new CopyOnWriteArrayList<>();
@@ -47,7 +47,7 @@ public class Main {
         for(Thread thread : threads){
             try {
                 thread.join();
-            }catch (Exception e ){
+            }catch (InterruptedException e ){
                 System.out.println(e);
             }
         }

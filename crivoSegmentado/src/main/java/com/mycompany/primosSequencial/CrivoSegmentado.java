@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class CrivoSegmentado {
     public static void main(String[] args) {
-        int totalPrimos = 0;
+        long totalPrimos = 0;
         Scanner scanner = new Scanner(System.in);
 
         // Entrada do intervalo
