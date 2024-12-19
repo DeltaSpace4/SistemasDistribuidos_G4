@@ -11,10 +11,10 @@ public class CrivoSegmentado {
 
         // Entrada do intervalo
         System.out.print("Digite o início do intervalo: ");
-        int inicio = scanner.nextInt();
+        long inicio = scanner.nextLong();
 
         System.out.print("Digite o fim do intervalo: ");
-        int fim = scanner.nextInt();
+        long fim = scanner.nextLong();
 
         // Validação do intervalo
         if (inicio > fim) {
@@ -26,69 +26,78 @@ public class CrivoSegmentado {
         long inicioExec = System.nanoTime();
 
         // Encontrar primos no intervalo usando o Crivo Segmentado
-        List<Integer> primos = crivoSegmentado(inicio, fim);
+        List<Integer> primos = crivoSegmentado((int)inicio, (int)fim);  // Cast necessário
 
         // Capturar o tempo final usando nanoTime()
         long fimExec = System.nanoTime();
 
         // Calcular e exibir o tempo de execução
-        long tempoExec = fimExec - inicioExec; // Tempo em milissegundos
+        long tempoExec = fimExec - inicioExec;
         System.out.println("Tempo de execução: " + tempoExec / 1000000.0 + " ms");
 
         // Exibir os números primos encontrados
         System.out.println("Números primos no intervalo [" + inicio + ", " + fim + "]:");
-        for (int primo : primos) {
-            totalPrimos += 1;
-        }
-        System.out.print("Total de primos: " + totalPrimos);
+        totalPrimos = primos.size();  // Otimização: usar size() em vez de loop
+        System.out.println("Total de primos: " + totalPrimos);
     }
 
-    // Função para encontrar primos usando o Crivo Segmentado
     public static List<Integer> crivoSegmentado(int inicio, int fim) {
+        // Otimização: Reduzir o tamanho do segmento para melhor gerenciamento de memória
+        int tamanhoSegmento = 1000000;  // Processar em blocos de 1 milhão
+        List<Integer> primos = new ArrayList<>();
+
         // Passo 1: Calcular todos os primos até sqrt(fim) usando o Crivo de Eratóstenes
         int limite = (int) Math.sqrt(fim);
         List<Integer> primosBase = crivoEratostenes(limite);
 
-        // Passo 2: Criar um array booleano para marcar números compostos no intervalo
-        boolean[] isComposto = new boolean[fim - inicio + 1];
+        // Processar o intervalo em segmentos
+        for (int segInicio = inicio; segInicio <= fim; segInicio += tamanhoSegmento) {
+            int segFim = Math.min(segInicio + tamanhoSegmento - 1, fim);
 
-        // Passo 3: Marcar múltiplos de cada primo no intervalo
-        for (int primo : primosBase) {
-            // Encontrar o menor múltiplo do primo dentro do intervalo
-            int menorMultiplo = Math.max(primo * primo, (inicio + primo - 1) / primo * primo);
+            // Passo 2: Criar um array booleano para o segmento atual
+            boolean[] isComposto = new boolean[segFim - segInicio + 1];
 
-            // Marcar todos os múltiplos do primo como compostos
-            for (int j = menorMultiplo; j <= fim; j += primo) {
-                isComposto[j - inicio] = true;
+            // Passo 3: Marcar múltiplos de cada primo no segmento atual
+            for (int primo : primosBase) {
+                int menorMultiplo = Math.max(primo * primo, ((segInicio + primo - 1) / primo) * primo);
+                for (int j = menorMultiplo; j <= segFim; j += primo) {
+                    isComposto[j - segInicio] = true;
+                }
             }
-        }
 
-        // Passo 4: Coletar os números primos do intervalo
-        List<Integer> primos = new ArrayList<>();
-        for (int i = 0; i < isComposto.length; i++) {
-            if (!isComposto[i]) {
-                int numero = i + inicio;
-                if (numero > 1) { // Ignorar 1, que não é primo
-                    primos.add(numero);
+            // Passo 4: Coletar os números primos do segmento atual
+            for (int i = 0; i < isComposto.length; i++) {
+                if (!isComposto[i]) {
+                    int numero = i + segInicio;
+                    if (numero > 1) {
+                        primos.add(numero);
+                    }
                 }
             }
         }
         return primos;
     }
 
-    // Função auxiliar: Crivo de Eratóstenes para encontrar primos até um limite
     public static List<Integer> crivoEratostenes(int limite) {
         boolean[] isComposto = new boolean[limite + 1];
         List<Integer> primos = new ArrayList<>();
 
-        for (int i = 2; i <= limite; i++) {
+        // Otimização: Reduzir o limite do loop externo para sqrt(limite)
+        for (int i = 2; i * i <= limite; i++) {
             if (!isComposto[i]) {
-                primos.add(i);
                 for (int j = i * i; j <= limite; j += i) {
                     isComposto[j] = true;
                 }
             }
         }
+
+        // Coletar os primos em uma passagem separada
+        for (int i = 2; i <= limite; i++) {
+            if (!isComposto[i]) {
+                primos.add(i);
+            }
+        }
+
         return primos;
     }
 }
