@@ -1,3 +1,5 @@
+package com.mycompany.primosThreads;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,14 +13,14 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        // Aquji verificamos o números de threads disponíveis para serem usadas, quanto mais melhor para a otimização
+        // Aqui verificamos o números de threads disponíveis para serem usadas, quanto mais melhor para a otimização
         int numeroThreads = Runtime.getRuntime().availableProcessors();
 
         System.out.println("Insira o início do intervalo: /n");
-        int valorInicial = scanner.nextInt();
+        long valorInicial = scanner.nextLong();
 
         System.out.println("Insira o final do intervalor /n ");
-        int valorFinal = scanner.nextInt();
+        long valorFinal = scanner.nextLong();
 
         // Lista que vai armazenar os primos encontrados
         List<Long> primos = new CopyOnWriteArrayList<>();
@@ -26,12 +28,12 @@ public class Main {
         // Lista que vai armazenar as threads.
         List<Thread> threads = new ArrayList<>();
 
-        int intervalo = (valorFinal - valorInicial + 1) / numeroThreads;
+        long intervalo = (valorFinal - valorInicial + 1) / numeroThreads;
 
         // Aqui as threads são criadas de acordo com a necessidade.
         for(int i = 0; i < numeroThreads; i++){
-            int inicio = valorInicial + i * intervalo;
-            int fim = (i == numeroThreads - 1) ? valorFinal : inicio + intervalo - 1;
+            long inicio = valorInicial + i * intervalo;
+            long fim = (i == numeroThreads - 1) ? valorFinal : inicio + intervalo - 1;
 
             Thread thread = new Thread(new PrimosThreads(inicio, fim, primos));
             thread.setName("Thread " + (i+1));

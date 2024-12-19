@@ -1,14 +1,16 @@
+package com.mycompany.primosThreads;
+
 import java.util.List;
 
 public class PrimosThreads implements Runnable {
 
     // Intervalo de números a ser processado ppelas threads
-    private final int valorInicial;
-    private final int valorFinal;
+    private final long valorInicial;
+    private final long valorFinal;
     private final List<Long> primos;
 
     // Construtor: recebe o intervalo e a lista compartilhada
-    PrimosThreads(int valorInicial, int valorFinal, List<Long> primos) {
+    PrimosThreads(long valorInicial, long valorFinal, List<Long> primos) {
         this.valorInicial = valorInicial;
         this.valorFinal = valorFinal;
         this.primos = primos;
