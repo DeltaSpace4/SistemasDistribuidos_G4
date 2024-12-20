@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 public class Cliente {
     public static void main(String[] args) throws MalformedURLException, NotBoundException {
+        long time = System.currentTimeMillis();
         try {
         	Primos stub = (Primos)Naming.lookup("rmi://127.0.0.1/Primos");
         	
@@ -26,6 +27,7 @@ public class Cliente {
         	
             System.out.println("Números primos no intervalo [" + inicio + ", " + fim + "]:");
         	System.out.println("Total de primos: " + stub.contarPrimos(inicio, fim));
+                    System.out.println("Tempo: "+(System.currentTimeMillis()-time)+"ms");
         	
         } catch (RemoteException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
