@@ -1,3 +1,5 @@
+package com.mycompany.primosThreads;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,13 +13,13 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        // Aquji verificamos o números de threads disponíveis para serem usadas, quanto mais melhor para a otimização
+        // Aqui verificamos o números de threads disponíveis para serem usadas, quanto mais melhor para a otimização
         long numeroThreads = Runtime.getRuntime().availableProcessors();
 
-        System.out.println("Insira o início do intervalo: /n");
+        System.out.println("Insira o início do intervalo: ");
         long valorInicial = scanner.nextLong();
 
-        System.out.println("Insira o final do intervalor /n ");
+        System.out.println("Insira o final do intervalor: ");
         long valorFinal = scanner.nextLong();
 
         // Lista que vai armazenar os primos encontrados
@@ -47,7 +49,7 @@ public class Main {
         for(Thread thread : threads){
             try {
                 thread.join();
-            }catch (InterruptedException e ){
+            }catch (Exception e ){
                 System.out.println(e);
             }
         }
